@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+
+<head>	
+
+
+		<title>Text2Image</title>
+		<script src="https://code.jquery.com/jquery-2.1.4.min.js" type='text/javascript'></script>
+		<script>
+		$(document).ready(function() {
+			$('#Submit').click(function() {
+			var text = $('#InputText').val();
+			$.post(
+				"/process",
+				{data: {'text': text}},
+				function(response) {
+					console.log(response);
+			});
+			
+		});
+		})
+		</script>
+
+</head>	
+
+<body>
+	<input name="InputText" id = "InputText"/>
+	<button type ="button" id = "Submit">Submit</button>
+
+</body>
+
+</html>
