@@ -1,8 +1,6 @@
 from flask import Flask
-from flask import render_template
+from flask import render_template, request
 import json
-
-
 import indicoio
 from nltk import tokenize
 import re
@@ -30,9 +28,6 @@ def cleanText(txt):
 def splitParagraphIntoSentences(paragraph):
     ''' break a paragraph into sentences
         and return a list '''
-    # to split by multile characters
-
-    #   regular expressions are easiest (and fastest)
     sentenceEnders = re.compile('[.!?]')
     sentenceList = sentenceEnders.split(paragraph)
     return sentenceList
@@ -49,19 +44,16 @@ def findKeywords(inputString, top_n=5):
     return list(keywordDict)
     
 def findNames(inputString):  
-    #inputString = input('Insert some text here: ')    
     return indicoio.named_entities(inputString)
     
 def main(inputString):
-    #inputString = input('Insert a paragraph here: ')
-    inputString = inputString[:-1]
     cleanedString = cleanText(inputString)
     splitIntoSentences = splitParagraphIntoSentences(cleanedString)
     
     keywords = []
     for sentence in splitIntoSentences:
-        keywords += findKeywords(sentence, findTopN(sentence))
-        
+        if sentence.strip() != "":
+            keywords += findKeywords(sentence, findTopN(sentence))
     return keywords
 
 
@@ -74,12 +66,11 @@ def hello_world():
 
 @app.route('/process', methods=['POST'])
 def process():
-    result = main(request.form.get('text'))
+    print(request.form)
+    result = main(request.form.get('data'))
     return json.dumps(result)
 
 
 if __name__ == '__main__':
     app.debug = True
     app.run()
-
-
